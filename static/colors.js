@@ -1,0 +1,18 @@
+export const BLUE="#084C61"
+export const TEAL="#32A287"
+export const GREEN="#44CF6C"
+export const RED="#E04831"
+export const YELLOW="#FFCF56"
+
+export const BLUE2="#084C61"
+export const TEAL2="#32A287"
+export const GREEN2="#44CF6C"
+export const RED2="#E04831"
+export const YELLOW2="#C19932"
+
+export const WHITE="#FFF"
+export const BLACK="#000"
+export const SNOW="#F2F2F2"
+export const LGRAY="#BCBCBC"
+export const MGRAY="#666666"
+export const DGARY="#151515"

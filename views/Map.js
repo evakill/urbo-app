@@ -1,7 +1,7 @@
 import React from 'react'
-import { Text, View, StyleSheet } from 'react-native'
-import { Form, Picker } from 'native-base'
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { View } from 'react-native'
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import MapHeader from '../components/MapHeader'
 
 class Map extends React.Component {
   constructor(props) {
@@ -10,11 +10,10 @@ class Map extends React.Component {
       destinations: [],
       city: {},
       cities: [],
-      language: 'test'
     }
   }
+
   componentDidMount() {
-    const params = { mode: 'no-cors' }
     fetch('https://urbo-server.herokuapp.com/dest')
     .then(resp => resp.json())
     .then(destinations => this.setState({ destinations }))
@@ -23,36 +22,39 @@ class Map extends React.Component {
     .then(cities => this.setState({ cities, city: cities[0] }))
   }
 
+  changeCity(id) {
+    const city = this.state.cities.find(city => city._id === id)
+    this.setState({ city })
+  }
+
   render() {
     const { destinations, cities, city } = this.state
-    console.log(cities)
+    if (!city.name) return null;
     return (
-    <View style={{ display: 'flex', flexDirection: 'column' }}>
-      <Form>
-        <Picker
-          selectedValue={this.state.language}
-          style={{ height: 20, width: '100%' }}
-          onValueChange={(itemValue, itemIndex) =>
-            this.setState({language: itemValue})
-          }
-          mode='dropdown'>
-          <Picker.Item label="Java" value="java" />
-          <Picker.Item label="JavaScript" value="js" />
-        </Picker>
-      </Form>
-      <View style={{ height: '90%' }}>
+      <>
+        <MapHeader
+          city={city}
+          cities={cities}
+          changeCity={(id) => this.changeCity(id)} />
         <MapView
           provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: 39.9526,
-            longitude: -75.1652,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+          region={{
+            latitude: city.lat,
+            longitude: city.lng,
+            latitudeDelta: 0.15,
+            longitudeDelta: 0.04,
           }}
           style={{ width: '100%', height: '100%'}}
-        />
-      </View>
-    </View>
+          showsUserLocation
+          followsUserLocation >
+            { destinations.map(dest => (
+              <Marker
+                key={dest._id}
+                coordinate={{ latitude: dest.lat, longitude: dest.lng }}
+              />
+            ))}
+        </MapView>
+      </>
     )
   }
 }
